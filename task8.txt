@@ -1,0 +1,41 @@
+Task8:
+Setup Prometheus (in monitoring namespace) for gathering host/container metrics along with health check status of the application
+
+Solution:
+Install Prometheus.
+Create a directory called monitoring to create all monitoring resources. 
+Create a file called monitoring/namespace.yml with the content. 
+
+	kind: Namespace 
+	apiVersion: v1 
+	metadata: 
+		name: monitoring 
+
+Apply & Test the namespace exists. 
+	$ kubectl get namespaces 
+	NAME       STATUS    AGE 
+	[...] 
+	monitoring Active    105m 
+
+Deploy Prometheus:
+Update our local helm chart repo. 
+	$ helm repo update 
+
+Deploy Prometheus into the monitoring namespace:
+	$ helm install stable/prometheus \ 
+		--namespace monitoring \ 
+		--name prometheus 
+
+This will deploy Prometheus into your cluster in the monitoring namespace and mark the release with the name prometheus. 
+Prometheus is now scraping the cluster together with the node-exporter and collecting metrics from the nodes.
+
+We can confirm by checking that the pods are running: 
+	$ kubectl get pods -n monitoring 
+	NAME 						READY 	STATUS 
+	prometheus-alertmanager-5c5958dcb7-bq2fw 	2/2 	Running 
+	prometheus-kube-state-metrics-76d649cdf9-v5qg5 	1/1 	Running 
+	prometheus-node-exporter-j74zq 			1/1 	Running 
+	prometheus-node-exporter-x5xnq 			1/1 	Running 
+	prometheus-pushgateway-6744d69d4-27dxb 		1/1 	Running 
+	prometheus-server-669b987bcd-swcxh 		2/2 	Running  
+

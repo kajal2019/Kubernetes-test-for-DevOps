@@ -1,0 +1,17 @@
+Task2:
+Setup CI Server (Jenkins or tool of your choice) inside the Kubernetes cluster and maintain the high availability of the jobs created. 
+
+Solution:
+
+Use following command to create CI Server:
+    kubectl create jenkins-persistent-template.json
+
+Where jenkins-persistent-template.json is configuration file for CI setup.
+
+Configuration file reference:
+(https://github.com/openshift/origin/blob/master/examples/jenkins/jenkins-persistent-template.json)
+origin/examples/jenkins/jenkins-persistent-template.json 
+
+Go to file (https://github.com/openshift/origin/find/master) 
+
+

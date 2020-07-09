@@ -1,0 +1,10 @@
+Task4:
+Deploy guest-book applications (or any other application which you think is more suitable to showcase your ability, 
+kindly justify why you have chosen a different application) in the development namespace. 
+
+Solution:
+
+https://github.com/IBM-Cloud/jpetstore-kubernetes.git 
+
+I am using this an internet repositary an example for the development work and not taking much time to write real time code.
+

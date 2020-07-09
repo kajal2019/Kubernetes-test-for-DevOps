@@ -1,0 +1,85 @@
+Task9:
+Create a dashboard using Grafana to help visualize the Node/Container/API Server etc. metrics from Prometheus server.
+
+Solution:
+Now install Grafana:
+When we deploy grafana, we need to configure it to read metrics from the right data sources.
+
+Defining the grafana data sources.
+Grafana takes data sources through yaml configs when it get provisioned.
+Kubernetes has nothing to do with importing the data. Kubernetes merely orchestrates the injection of these yaml files.
+When the Grafana Helm chart gets deployed, it will search for any config maps that contain a grafana_datasource label.
+
+We create a Prometheus data source config map, In the monitoring folder, create a sub-folder called grafana .
+Here is where we will store our configs for the grafana deployment.
+
+Create a file called monitoring/grafana/config.yaml with the content:
+	apiVersion: v1
+	kind: ConfigMap
+	metadata:
+		name: prometheus-grafana-datasource
+		namespace: monitoring
+		labels:
+			grafana_datasource: '1'
+	data:
+		datasource.yaml: |-
+		apiVersion: 1
+		datasources:
+			- name: Prometheus
+			type: prometheus
+			access: proxy
+			orgId: 1
+			url: http://prometheus-server.monitoring.svc.cluster.local
+
+Here is where we add the grafana_datasource label which will tell the grafana provisioner that this is a datasource it should inject.
+	labels:
+		grafana_datasource: '1'
+
+Apply the config using "$ kubectl apply -f monitoring/grafana/config.yaml" command.
+Test config using "$ kubectl get configmaps -n monitoring" command.
+
+Activate search for our config:
+When Grafana gets deployed and the provisioner runs, the data source provisioner is deactivated. We need to activate it so it searches for our config maps.
+We need to create our own values.yml file to override the datasources search value, so when Grafana is deployed it will search our datasource.yml definition and inject it.
+Create a file called monitoring/grafana/values.yml with the content(example):
+	sidecar:
+		datasources:
+			enabled: true
+			label: grafana_datasource
+
+This will inject a sidecar which will load all the data sources into Grafana when it gets provisioned.
+Now we can deploy Grafana with the overridden values.yml file and our datasource will be imported.
+$ helm install stable/grafana \
+	-f monitoring/grafana/values.yml \
+	--namespace monitoring \
+	--name grafana
+
+
+Check that it is running:
+	$ kubectl get pods -n monitoring
+	NAME 				READY 		STATUS 		RESTARTS 	AGE
+	[...]
+	grafana-5f4d8bcb94-ppsjq 	1/1 		Running
+
+Get the Grafana Password
+$ kubectl get secret \
+--namespace monitoring grafana \
+-o jsonpath="{.data.admin-password}" \
+| base64 --decode ; echo
+
+This will spit out the password to your Grafana dashboard. The username is admin
+
+Port Forward the Grafana dashboard to see whats happening:
+$ export POD_NAME=$(kubectl get pods --namespace monitoring -l "app=grafana,release=grafana" -o jsonpath="{.items[0].metadata.name}")
+$ kubectl --namespace monitoring port-forward $POD_NAME 3000
+
+Go to http://localhost:3000 in your browser. You should see the Grafana login screen:
+
+Add a dashboard
+Grafana has a long list of prebuilt dashboard here:
+https://grafana.com/dashboards
+Here you will find many many dashboards to use. We will use this one as it is quite comprehensive in everything it tracks.
+In the left hand menu, choose Dashboards > Manage > + Import
+In the Grafana.com dashboard input, add the dashboard ID we want to use: 1860 and click Load
+On the next screen select a name for your dashboard and select Prometheus as the datasource for it and click Import.
+The list of metrics is extensive.

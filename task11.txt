@@ -1,0 +1,6 @@
+Task11:
+Automate the process of cluster creation and application deployment using Terraform + Ansible/Jenkins/Helm/script/SDK.
+
+Solution:
+A terraform module to create a managed Kubernetes cluster on AWS EKS. Available through the Terraform registry.
+I am using https://github.com/terraform-aws-modules/terraform-aws-eks git repo as example.
