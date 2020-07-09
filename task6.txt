@@ -1,0 +1,15 @@
+Task6:
+Use Helm to deploy the application on Kubernetes Cluster from CI server.
+
+Solution:
+Deploy with Helm:
+1) Install Helm.
+2) Initialize helm using "helm init" command.
+3) Find your Ingress Subdomain by running ibmcloud ks cluster get --cluster YOUR_CLUSTER_NAME, it will look similar to "mycluster.us-south.containers.appdomain.cloud".
+4) Open ../helm/modernpets/values.yaml and make the following changes.
+	4.1) Update repository and replace <REGISTRY> with your Container Registry and <NAMESPACE> with your Container Registry namespace.
+	4.2) Update hosts and replace <Ingress Subdomain> with your Ingress Subdomain.
+5) Repeat the previous step and update ../helm/mmssearch/values.yaml with the same changes.
+6) Next, install JPetStore and Visual Search using the helm yaml files you just created:
+	6.1) helm install --name jpetstore ./modernpets
+	6.2) helm install --name mmssearch ./mmssearch

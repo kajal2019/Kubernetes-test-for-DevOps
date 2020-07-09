@@ -1,0 +1,46 @@
+Task 1:  
+Create a Highly available Kubernetes cluster on AWS. Do not create a Kubernetes hosted solution (like EKS). (AWS free tier should suffice for this exercise). 
+Use Kubeadm(preferred)/kubespray/kops. If possible, share a script / code which can be used to create the cluster. 
+
+Solution: 
+Kops, short for Kubernetes Operations, is a set of tools for installing, operating, and deleting Kubernetes clusters in the cloud. 
+A rolling upgrade of an older version of Kubernetes to a new version can also be performed. It also manages the cluster add-ons. 
+After the cluster is created, the usual kubectl CLI can be used to manage repo download Kops and Kubectl resources in the cluster. 
+
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl 
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl 
+
+
+IAM user permission: 
+The IAM user to create the Kubernetes cluster must have the following permissions: 
+1) AmazonEC2FullAccess 
+2) AmazonRoute53FullAccess 
+3) AmazonS3FullAccess 
+4) IAMFullAccess 
+5) AmazonVPCFullAccess 
+
+Kops needs a “state store” to store configuration information of the cluster.
+For example, how many nodes, instance type of each node, and Kubernetes version. The state is stored during the initial cluster creation.
+Any subsequent changes to the cluster are also persisted to this store as well. As of publication, Amazon S3 is the only supported storage mechanism.
+Create a S3 bucket and pass that to the kops CLI during cluster creation. 
+
+aws s3api create-bucket --bucket kubernetes-aws-os 
+aws s3api put-bucket-versioning --bucket kubernetes-aws-os --versioning-configuration Status=Enabled 
+aws s3api put-bucket-versioning --bucket kubernetes-aws-os--versioning-configuration Status=Enabled 
+
+Generate a Route 53 hosted zone using the AWS CLI. Download jq to run this command: 
+ID=$(uuidgen) && \aws route53 create-hosted-zone \--name cluster.kubernetes-aws.io \--caller-reference $ID \| jq .DelegationSet.NameServers 
+
+This shows an output such as the following: 
+["ns-94.awsdns-11.com","ns-1962.awsdns-53.co.uk","ns-838.awsdns-40.net","ns-1107.awsdns-10.org"] 
+
+
+Create the Kubernetes cluster:
+1) Provisioning EC2 instances.
+2) Setting up AWS resources such as networks, Auto Scaling groups, IAM users, and security groups. 
+3) Installing Kubernetes. 
+
+kops create cluster \--name cluster.kubernetes-aws.io \--zones us-west-2a \--state s3://kubernetes-aws-io \--yes 
+
+kops validate cluster --state=s3://kubernetes-aws-os  (It shows the validate clusters). 
+

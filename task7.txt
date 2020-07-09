@@ -1,0 +1,10 @@
+Task7:
+Create a monitoring namespace in the cluster.
+
+Solution:
+All resources in Kubernetes are launched in a namespace, and if no namespace is specified, then the ‘default’ namespace is used. 
+Command:
+	kubectl apply -f monitoring-namespace.yaml 
+
+Once this is applied we can view the available namespaces with the command: 
+	kubectl get namespaces 

@@ -1,0 +1,17 @@
+Task5:
+Install and configure Helm in Kubernetes
+
+Solution:
+1) Install Helm in Kubernetes:
+	a) Download the latest helm 3 installation script using "curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3" command.
+	b) Add execute permissions to the downloaded script(get_helm.sh) using "chmod 700 get_helm.sh" command.
+	c) Execute the installation script using "./get_helm.sh" command.
+	We can validate the helm installation using "helm" command.
+
+2) Configure Helm in Kubernetes:
+We can configure the following evviornment variables:
+	a) Update repository.
+	b) Update Container registry namespace.
+	c) Updat the host.
+
+

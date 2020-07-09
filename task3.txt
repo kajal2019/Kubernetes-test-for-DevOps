@@ -1,0 +1,8 @@
+Task3:
+Create a development namespace.
+
+Solution:
+Use following commands to create development namespace
+     Kubectl create a ns production
+
+
