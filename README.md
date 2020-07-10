@@ -1,6 +1,6 @@
 # Kubernetes-test-for-DevOps
 
-Please find the list of task and their solutions:
+Please find the list of task and their solutions (master branch):
 1) Create a Highly available Kubernetes cluster on AWS. Do not create a Kubernetes hosted solution (like EKS). (AWS free tier should suffice for this exercise). Use Kubeadm(preferred)/kubespray/kops. If possible share a script / code which can be used to create the cluster.
 >Solution Location: task1.txt
 
